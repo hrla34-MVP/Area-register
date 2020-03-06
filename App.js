@@ -23,27 +23,34 @@ export default class App extends React.Component {
 
       newAddress: '', // new address properties
       newcoors: {}, // coordinates corresponding to a new address => Database _ coords
+
+
+      areaName:'', // NAME of the defined area => Database _ name
+      radius: 100, // RADIUS of the defined area => Database _ radius ; default of 100m
+
+      // ------states for modal
+
+      // Address
+      modalVisible: false,
+      modalVisible2: false,
       street: '',
       city:'',
       region:'',
       zip: '',
 
-      areaName:'', // NAME of the defined area => Database _ name
-      radius: 100, // RADIUS of the defined area => Database _ radius ; default of 100m
+      // Events
+      notiOpen: false,
+      notiEnter: false, // Enter => Database _ Enter
+      notiExit: false,  // Exit => Databse _ Exit
+      notiTitle: '',
+      notiBody: '',
 
-      //states for event handling
+    //states for event handling
         //  enter_noti : true(on) / false(off)
         //  exit_noti : true(on)/ false(off)
         //  notification : true/ false
         //  title
         //  body
-
-      // ------states for modal
-
-      modalVisible: false,
-      modalVisible2: false
-
-
     }
   }
 
@@ -64,6 +71,26 @@ export default class App extends React.Component {
   }
   setModalVisible2(){
     this.setState({modalVisible2: !this.state.modalVisible2})
+  }
+
+  handleNotiOpen(){
+    this.setState({
+      notiOpen: !this.state.notiOpen,
+      notiEnter: false,
+      notiExit: false
+    })
+  }
+
+  handleNotiEnter(){
+    this.setState({
+      notiEnter: !this.state.notiEnter
+    })
+  }
+
+  handleNotiExit(){
+    this.setState({
+      notiExit: !this.state.notiExit
+    })
   }
 
 // ------------------------------------------------------
@@ -205,7 +232,7 @@ export default class App extends React.Component {
               animationType="fade"
               transparent={true}
               visible={this.state.modalVisible}
-              presentationStyle="formSheet"
+              presentationStyle="pageSheet"
               style={styles.addressModal}
             >
               <TouchableWithoutFeedback onPress={()=> Keyboard.dismiss()}>
@@ -261,7 +288,10 @@ export default class App extends React.Component {
                   <View style={styles.input6}>
                     <View style={styles.save}>
                       <Button
-                        onPress={this._saveAddress}
+                        onPress={async () => {
+                          await this._saveAddress()
+                          await this.setModalVisible()
+                        }}
                         title="save"
                         color="white"
                       />
@@ -274,59 +304,50 @@ export default class App extends React.Component {
               animationType="slide"
               transparent={true}
               visible={this.state.modalVisible2}
-              presentationStyle="formSheet"
+              presentationStyle="pageSheet"
               style={styles.addressModal}
             >
-              <TouchableWithoutFeedback onPress={()=> Keyboard.dismiss()}>
-              <View style={{marginTop: '100%', alignItems: "center", justifyContent:"center", backgroundColor: "transparent"}}>
-                <View style={styles.input1}>
-                  <TextInput
-                    placeholder="EVENT"
-                    keyboardAppearance="dark"
-                    placeholderTextColor="rgb(200,200,200)"
-                    style={{color: 'white'}}
-                    onChangeText={(text) => this.setState({
-                      street: text
-                    })}
-                  />
-                </View>
-                <View style={styles.input2}>
-                  <TextInput
-                    placeholder="City"
-                    onChangeText={(text) => this.setState({
-                      city: text
-                    })}
-                  />
-                </View>
-                <View style={styles.input3}>
-                  <View style={styles.input4}>
-                    <TextInput
-                      placeholder="State"
-                      onChangeText={(text) => this.setState({
-                        region: text
-                      })}
-                    />
-                  </View>
-                  <View style={styles.input5}>
-                    <TextInput
-                      placeholder="Zip Code"
-                      onChangeText={(text) => this.setState({
-                        zip: text
-                      })}
-                    />
+              <TouchableWithoutFeedback onPress={()=> {
+                Keyboard.dismiss()}}>
+                <View style={{marginTop: '100%', alignItems: "center", justifyContent:"center", backgroundColor: "transparent"}}>
+                  <View style={{width: '80%', height: 240, backgroundColor: "rgb(40,40,40)",    justifyContent: 'center', alignItems: 'center'}}>
+                    <View style={styles.eventsTitle}>
+                      <Text style={{ ...styles.eventsFont, fontSize: 16}}>EVENTS</Text>
+                    </View>
+                    <View style={styles.eventwrapper}>
+                      {!this.state.notiOpen ? (
+                        <TouchableHighlight style={styles.events1} onPress={()=>this.handleNotiOpen()} underlayColor='transparent'><Text style={styles.eventsFont}>Notification +</Text></TouchableHighlight>
+                         ) : (
+                        <TouchableHighlight style={styles.events1open} onPress={()=>this.handleNotiOpen()} underlayColor='transparent'><Text style={styles.eventsFont}>Notification -</Text></TouchableHighlight>
+                      )}
+                      {!this.state.notiOpen ? (<View></View>):(
+                        <View style={{...styles.eventsNoti, flexDirection: 'row'}}>
+                          <TouchableHighlight
+                          onPress={()=>{
+                            this.handleNotiEnter()
+                          }}
+                          color="white"
+                          style={styles.events2}
+                          >
+                          {this.state.notiEnter ? (<Text style={{color: 'white'}}>On Enter : ON</Text>) : (<Text style={{color: 'white'}}>On Enter : OFF</Text>)}
+                          </TouchableHighlight>
+                          <TouchableHighlight
+                          onPress={()=>{
+                            this.handleNotiExit()
+                          }}
+                          color="white"
+                          style={styles.events2}
+                          >
+                            {this.state.notiExit ? (<Text style={{color: 'white'}}>On Exit : ON</Text>) : (<Text style={{color: 'white'}}>On Exit : OFF</Text>)}
+                          </TouchableHighlight>
+                        </View>
+                      )}
+                      <View style={styles.events1}><Text style={styles.eventsFont}>Bluetooth +</Text></View>
+                      <View style={styles.events1}><Text style={styles.eventsFont}>Wifi +</Text></View>
+
                     </View>
                   </View>
-                  <View style={styles.input6}>
-                    <View style={styles.save}>
-                      <Button
-                        onPress={this._saveAddress}
-                        weight="400"
-                        title="SAVE"
-                        color="white"
-                      />
-                    </View>
-                  </View>
-              </View>
+                </View>
               </TouchableWithoutFeedback>
             </Modal>
       </View>
@@ -537,14 +558,14 @@ const styles = StyleSheet.create({
   input1:{
     height: 50,
     width: 300,
-    backgroundColor: 'grey',
+    backgroundColor: 'rgb(40,40,40)',
     justifyContent: 'center',
     alignItems: 'center'
   },
   input2:{
     height: 50,
     width: 300,
-    backgroundColor: 'grey',
+    backgroundColor: 'rgb(40,40,40)',
     color:'black',
     justifyContent: 'center',
     alignItems: 'center'
@@ -560,7 +581,7 @@ const styles = StyleSheet.create({
     flex: 1,
     height: 50,
     width: '50%',
-    backgroundColor: 'grey',
+    backgroundColor: 'rgb(40,40,40)',
     justifyContent: 'center',
     alignItems: 'center'
   },
@@ -568,14 +589,14 @@ const styles = StyleSheet.create({
     flex: 1,
     height: 50,
     width: '50%',
-    backgroundColor: 'grey',
+    backgroundColor: 'rgb(40,40,40)',
     justifyContent: 'center',
     alignItems: 'center'
   },
   input6: {
     height: 50,
     width: 300,
-    backgroundColor: 'grey',
+    backgroundColor: "rgb(40,40,40)",
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
@@ -585,7 +606,7 @@ const styles = StyleSheet.create({
   save :{
     width: '50%',
     height: 50,
-    backgroundColor: 'grey',
+    backgroundColor: 'rgb(40,40,40)',
     justifyContent: 'center',
     alignItems: 'center'
   },
@@ -602,7 +623,59 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: '#rgb(30,30,30)',
+  },
+  eventsTitle:{
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    width: '100%',
+    height: '100%',
+  },
+  events1: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    width: '100%',
+    height: '100%',
+    paddingRight: '40%'
+  },
+  events1open:{
+    flex: .5,
+    justifyContent: 'center',
+    alignItems: 'center',
+    width: '100%',
+    height: '100%',
+    paddingRight: '40%',
+    // backgroundColor: 'rgb(20,20,20)'
+  },
+  events2:{
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    width: '50%',
+    height: '100%',
+    // paddingRight: '20%',
+    // backgroundColor: 'rgb(20,20,20)'
+
+  },
+  eventsFont: {
+    color: 'white'
+  },
+  eventwrapper: {
+    flex: 5,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  eventsNoti: {
+    flex: .5,
+    justifyContent: 'center',
+    alignItems: 'center',
+    width: '100%',
+    height: '50%',
+    // backgroundColor: 'blue'
   }
+
+
 });
 
 /*
