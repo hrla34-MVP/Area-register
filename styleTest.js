@@ -229,7 +229,9 @@ export default class App extends React.Component {
             />
             <Button
               onPress={this._getLocationAsync}
-              title="use my location"/>
+              title="use my location"
+              // color="#841584"
+              />
           </View>
         <View style={styles.container1}>
           {/* <Text>My Address</Text>

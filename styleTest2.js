@@ -8,7 +8,7 @@ import React from 'react';
 import Constants from 'expo-constants';
 import * as Location from 'expo-location';
 import * as Permissions from 'expo-permissions';
-import { StyleSheet, Text, View, Dimensions, TextInput, Button, ScrollView, KeyboardAvoidingView, StatusBar, Modal, TouchableHighlight, Keyboard, TouchableWithoutFeedback } from 'react-native';
+import { StyleSheet, Text, View, Dimensions, TextInput, Button, ScrollView, KeyboardAvoidingView, StatusBar, Modal, TouchableHighlight } from 'react-native';
 import MapView, {Circle} from 'react-native-maps';
 
 export default class App extends React.Component {
@@ -40,8 +40,7 @@ export default class App extends React.Component {
 
       // ------states for modal
 
-      modalVisible: false,
-      modalVisible2: false
+      modalVisible: false
 
 
     }
@@ -61,9 +60,6 @@ export default class App extends React.Component {
 // ------------------------------------------------------
   setModalVisible(){
     this.setState({modalVisible: !this.state.modalVisible})
-  }
-  setModalVisible2(){
-    this.setState({modalVisible2: !this.state.modalVisible2})
   }
 
 // ------------------------------------------------------
@@ -194,167 +190,45 @@ export default class App extends React.Component {
 
 // ------------------------------------------------------HTML
     return (
-      <View>
-      {/* <StatusBar barStyle="dark-content"/> */}
-      <TouchableWithoutFeedback onPress={()=> Keyboard.dismiss()}>
-      <View style={styles.conOne}>
-        <View style={styles.conTwo0}>
-          <View style={styles.conTwo00}>
+      <ScrollView>
+      <StatusBar barStyle="dark-content"/>
+      <View style={{marginTop: 22}}>
+        <Modal
+          animationType="slide"
+          transparent={true}
+          visible={this.state.modalVisible}
+        >
           <View style={{marginTop: 22}}>
-            <Modal
-              animationType="fade"
-              transparent={true}
-              visible={this.state.modalVisible}
-              presentationStyle="formSheet"
-              style={styles.addressModal}
-            >
-              <TouchableWithoutFeedback onPress={()=> Keyboard.dismiss()}>
-              <View style={{marginTop: '100%', alignItems: "center", justifyContent:"center", backgroundColor: "transparent"}}>
+            <Text>Hello World!</Text>
+            <TouchableHighlight
+              onPress={()=>{
+                this.setModalVisible()
+              }}>
+                <Text>Hide Modal</Text>
+            </TouchableHighlight>
 
-                <View style={styles.input1}>
-                  <TextInput
-                    placeholder="Street Address"
-                    keyboardAppearance="dark"
-                    placeholderTextColor="rgb(200,200,200)"
-                    style={{color: 'white'}}
-                    onChangeText={(text) => this.setState({
-                      street: text
-                    })}
-                  />
-                </View>
-                <View style={styles.input2}>
-                  <TextInput
-                    placeholder="City"
-                    keyboardAppearance="dark"
-                    placeholderTextColor="rgb(200,200,200)"
-                    style={{color: 'white'}}
-                    onChangeText={(text) => this.setState({
-                      city: text
-                    })}
-                  />
-                </View>
-                  <View style={styles.input3}>
-                    <View style={styles.input4}>
-                      <TextInput
-                        placeholder="State"
-                        keyboardAppearance="dark"
-                        placeholderTextColor="rgb(200,200,200)"
-                        style={{color: 'white'}}
-                        onChangeText={(text) => this.setState({
-                          region: text
-                        })}
-                      />
-                    </View>
-                    <View style={styles.input5}>
-                      <TextInput
-                        placeholder="Zip Code"
-                        keyboardAppearance="dark"
-                        placeholderTextColor="rgb(200,200,200)"
-                        keyboardType="number-pad"
-                        style={{color: 'white'}}
-                        onChangeText={(text) => this.setState({
-                          zip: text
-                        })}
-                      />
-                    </View>
-                  </View>
-                  <View style={styles.input6}>
-                    <View style={styles.save}>
-                      <Button
-                        onPress={this._saveAddress}
-                        title="save"
-                        color="white"
-                      />
-                    </View>
-                  </View>
-                </View>
-              </TouchableWithoutFeedback>
-            </Modal>
-            <Modal
-              animationType="slide"
-              transparent={true}
-              visible={this.state.modalVisible2}
-              presentationStyle="formSheet"
-              style={styles.addressModal}
-            >
-              <TouchableWithoutFeedback onPress={()=> Keyboard.dismiss()}>
-              <View style={{marginTop: '100%', alignItems: "center", justifyContent:"center", backgroundColor: "transparent"}}>
-                <View style={styles.input1}>
-                  <TextInput
-                    placeholder="EVENT"
-                    keyboardAppearance="dark"
-                    placeholderTextColor="rgb(200,200,200)"
-                    style={{color: 'white'}}
-                    onChangeText={(text) => this.setState({
-                      street: text
-                    })}
-                  />
-                </View>
-                <View style={styles.input2}>
-                  <TextInput
-                    placeholder="City"
-                    onChangeText={(text) => this.setState({
-                      city: text
-                    })}
-                  />
-                </View>
-                <View style={styles.input3}>
-                  <View style={styles.input4}>
-                    <TextInput
-                      placeholder="State"
-                      onChangeText={(text) => this.setState({
-                        region: text
-                      })}
-                    />
-                  </View>
-                  <View style={styles.input5}>
-                    <TextInput
-                      placeholder="Zip Code"
-                      onChangeText={(text) => this.setState({
-                        zip: text
-                      })}
-                    />
-                    </View>
-                  </View>
-                  <View style={styles.input6}>
-                    <View style={styles.save}>
-                      <Button
-                        onPress={this._saveAddress}
-                        weight="400"
-                        title="SAVE"
-                        color="white"
-                      />
-                    </View>
-                  </View>
-              </View>
-              </TouchableWithoutFeedback>
-            </Modal>
+          </View>
+        </Modal>
       </View>
-          </View>
-          <View style={styles.conTwo01}>
-            <View style={{ ...styles.conThree2, justifyContent: 'center',alignItems: 'start', top: '20%' ,leftPadding: 10}}>
-              <Text style={{width: 300, color:'white', fontSize: 24}}>RESISTER AREA</Text>
-            </View>
-          </View>
-        </View>
+      <View style={styles.conOne}>
         <View style={styles.conTwo1}>
           <View style={styles.conThree1}>
             <MapView region={this.state.mapRegion}
             onRegionChange={this._handleMapRegionChange} style={styles.mapStyle}>
-              <Circle center={{latitude: this.state.mapRegion.latitude, longitude: this.state.mapRegion.longitude}} radius={mapCircle} fillColor="rgba(180,180,180,0.7)" zIndex={2} strokeWidth={0.001}/>
+              <Circle center={{latitude: this.state.mapRegion.latitude, longitude: this.state.mapRegion.longitude}} radius={mapCircle} fillColor="rgba(0,0,255,0.6)" zIndex={2} strokeWidth={0.001}/>
             </MapView>
+            <View style={styles.current}>
+              <Text>hello</Text>
+            </View>
           </View>
           <View style={styles.conThree2}>
-              {/* <Text style={{width: 300, color:'white'}}> :: AREA ADDRESS ::</Text> */}
-              <Text style={{width: 300, color:'white'}}> {myadd}</Text>
-            </View>
+            <Text style={{width: 300}}> :: AREA ADDRESS ::</Text>
+            <Text style={{width: 300}}> {myadd}</Text>
+          </View>
           <View style={styles.conThree3}>
             <View style={styles.conFour1}>
               <TextInput
                 placeholder="Area Name"
-                keyboardAppearance="dark"
-                placeholderTextColor="grey"
-                style={{color: 'white'}}
                 onChangeText={(text) => this.setState({
                   areaName: text
                 })}
@@ -363,10 +237,6 @@ export default class App extends React.Component {
             <View style={styles.conFour2}>
               <TextInput
                 placeholder="Radius 100m, 200m..."
-                keyboardAppearance="dark"
-                keyboardType="number-pad"
-                placeholderTextColor="grey"
-                style={{color: 'white'}}
                 onChangeText={(text) => {
                   if(Number(text) > 10000){
                     this.setState({
@@ -386,42 +256,78 @@ export default class App extends React.Component {
           <View style={styles.conThree4}>
             <View style={styles.conFourhold}>
               <View style={styles.conFour3}>
-                <TouchableHighlight
+                <Button
                 onPress={this._getLocationAsync}
+                title="use my location"
                 color="white"
-                >
-                  <Text style={{color: 'white'}}>CURRENT LOCATION +</Text>
-                </TouchableHighlight>
+                />
               </View>
               <View style={styles.conFour4}>
+                <Text style={{color: 'white'}}>hello</Text>
                 <TouchableHighlight
                   onPress={() => {
                     this.setModalVisible()
                   }}>
-                  <Text style={{color: 'white'}}>ADDRESS +</Text>
+                  <Text>Show Modal</Text>
                 </TouchableHighlight>
               </View>
-              <View style={styles.conFour4}>
-                <TouchableHighlight
-                  onPress={() => {
-                    this.setModalVisible2()
-                  }}>
-                  <Text style={{color: 'white'}}>EVENT +</Text>
-                </TouchableHighlight>
+            </View>
+            <View style={styles.conFive}>
+              <View style={styles.inputBox}>
+                  <View style={styles.input1}>
+                    <TextInput
+                      placeholder="Street Address"
+                      onChangeText={(text) => this.setState({
+                        street: text
+                      })}
+                    />
+                  </View>
+                  <View style={styles.input2}>
+                    <TextInput
+                      placeholder="City"
+                      onChangeText={(text) => this.setState({
+                        city: text
+                      })}
+                    />
+                  </View>
+                  <View style={styles.input3}>
+                    <View style={styles.input4}>
+                      <TextInput
+                        placeholder="State"
+                        onChangeText={(text) => this.setState({
+                          region: text
+                        })}
+                      />
+                    </View>
+                    <View style={styles.input5}>
+                      <TextInput
+                        placeholder="Zip Code"
+                        onChangeText={(text) => this.setState({
+                          zip: text
+                        })}
+                      />
+                    </View>
+                  </View>
+                  <View style={styles.input6}>
+                    <View style={styles.save}>
+                      <Button
+                        onPress={this._saveAddress}
+                        title="save"
+                        color="white"
+                      />
+                    </View>
+                  </View>
               </View>
             </View>
           </View>
           <View style={styles.conThree5}>
             <View style={styles.conFour5}>
-              <Text style={{color: 'white'}}>RESISTER</Text>
+              <Text style={{color: 'white'}}>hello</Text>
             </View>
           </View>
         </View>
-        <View style={styles.conTwo10}>
-        </View>
-        </View>
-      </TouchableWithoutFeedback>
       </View>
+      </ScrollView>
     )
   };
 }
@@ -431,32 +337,16 @@ const styles = StyleSheet.create({
     height: Dimensions.get('window').height,
     justifyContent: 'flex-start',
   },
-  conTwo0:{
-    flex: 1.5,
-    backgroundColor: 'black'
-  },
-  conTwo00:{
-    flex: 1,
-    backgroundColor: 'black'
-  },
-  conTwo01:{
-    flex: 2,
-    backgroundColor: 'black',
-    color: 'white'
-  },
   conTwo1:{
-    flex: 5,
+    flex: 3,
   },
   conTwo2:{
-    flex: 5
-  },
-  conTwo10:{
-    flex: 1.5,
-    backgroundColor:'black'
+    flex: 3
   },
   conThree1:{
     height: '100%',
     flex: 6,
+    backgroundColor: 'yellow'
   },
   mapStyle: {
     height: '100%',
@@ -465,11 +355,9 @@ const styles = StyleSheet.create({
   conThree2:{
     flex: 1,
     width: '100%',
-    height: '100%',
+    height: 25,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: 'black',
-    padding: 15
   },
   conThree3:{
     flex: 1,
@@ -480,32 +368,32 @@ const styles = StyleSheet.create({
   },
   conThree4:{
     flex: 3,
-    backgroundColor: 'black',
+    backgroundColor: 'yellow',
   },
   conThree5:{
     flex: 1,
-    height: '100%',
+    height: 50,
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: 'black',
+    backgroundColor: 'pink',
   },
   conFour1:{
     height: '100%',
     flex: 1,
-    backgroundColor: 'black',
     justifyContent: 'center',
     alignItems: 'center'
   },
   conFour2:{
     height: '100%',
-    backgroundColor: 'black',
+    backgroundColor: 'pink',
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center'
   },
   conFourhold:{
-    height: '100%'
+    flexDirection: 'row',
+    height: 50
   },
   conFour3:{
     height: '100%',
@@ -519,14 +407,21 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: 'black'
+    backgroundColor: 'blue'
   },
   conFour5:{
     height: 50,
     width: '50%',
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#rgb(30,30,30)',
+    backgroundColor: 'black',
+  },
+  conFive:{
+    height: '100%',
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'yellow',
   },
   inputBox:{
     backgroundColor: 'blue',
@@ -537,21 +432,21 @@ const styles = StyleSheet.create({
   input1:{
     height: 50,
     width: 300,
-    backgroundColor: 'grey',
+    backgroundColor: 'pink',
     justifyContent: 'center',
     alignItems: 'center'
   },
   input2:{
     height: 50,
     width: 300,
-    backgroundColor: 'grey',
-    color:'black',
+    backgroundColor: 'pink',
     justifyContent: 'center',
     alignItems: 'center'
   },
   input3:{
     height: 50,
     width: 300,
+    backgroundColor: 'pink',
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center'
@@ -560,7 +455,7 @@ const styles = StyleSheet.create({
     flex: 1,
     height: 50,
     width: '50%',
-    backgroundColor: 'grey',
+    backgroundColor: 'pink',
     justifyContent: 'center',
     alignItems: 'center'
   },
@@ -568,14 +463,14 @@ const styles = StyleSheet.create({
     flex: 1,
     height: 50,
     width: '50%',
-    backgroundColor: 'grey',
+    backgroundColor: 'white',
     justifyContent: 'center',
     alignItems: 'center'
   },
   input6: {
     height: 50,
     width: 300,
-    backgroundColor: 'grey',
+    backgroundColor: 'white',
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
@@ -585,7 +480,7 @@ const styles = StyleSheet.create({
   save :{
     width: '50%',
     height: 50,
-    backgroundColor: 'grey',
+    backgroundColor: 'green',
     justifyContent: 'center',
     alignItems: 'center'
   },
@@ -596,12 +491,6 @@ const styles = StyleSheet.create({
     top: '80%',
     bottom: '5%',
     zIndex: 2
-  },
-  addressModal:{
-
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#rgb(30,30,30)',
   }
 });
 
