@@ -73,11 +73,15 @@ export default class App extends React.Component {
     this.setState({modalVisible2: !this.state.modalVisible2})
   }
 
+  handleEventOpen(){
+    this.setState({
+      notiOpen: false
+    })
+  }
+
   handleNotiOpen(){
     this.setState({
-      notiOpen: !this.state.notiOpen,
-      notiEnter: false,
-      notiExit: false
+      notiOpen: !this.state.notiOpen
     })
   }
 
@@ -426,6 +430,7 @@ export default class App extends React.Component {
                 <TouchableHighlight
                   onPress={() => {
                     this.setModalVisible2()
+                    this.handleEventOpen()
                   }}>
                   <Text style={{color: 'white'}}>EVENT +</Text>
                 </TouchableHighlight>
