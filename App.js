@@ -14,6 +14,10 @@ import MapView, {Circle} from 'react-native-maps';
 import gql from 'graphql-tag'
 import { ApolloClient, HttpLink, InMemoryCache } from 'apollo-boost';
 import { ApolloProvider } from 'react-apollo';
+//fence
+import fenceDefiner from './FenceDefiner/fenceDefiner.js'
+
+
 
 const client = new ApolloClient({
   link: new HttpLink({
@@ -63,6 +67,9 @@ export default class App extends React.Component {
         //  notification : true/ false
         //  title
         //  body
+
+
+      areas: []
     }
   }
 
@@ -78,8 +85,26 @@ export default class App extends React.Component {
       });
     } else {
       this._getLocationAsync();
-      // this._getCoors();
+      // fenceDefiner([{
+      //   identifier: 'Hack Reactor',
+      //   longitude: -118.390868,
+      //   latitude: 33.976097,
+      //   radius: 100
+      // }]);
     }
+
+    // let {status} = await Permissions.askAsync(Permissions.LOCATION);
+
+    // if (status !== 'granted') {
+    //   alert('Permissions to access location was deined');
+    // } else {
+    //   fenceDefiner([{
+    //     identifier: 'Hack Reactor',
+    //     longitude: -118.390868,
+    //     latitude: 33.976097,
+    //     radius: 100
+    //   }]);
+    // }
   }
 // ------------------------------------------------------
   // server - get request
@@ -89,12 +114,19 @@ export default class App extends React.Component {
       query areas {
         areas {
           name
+          latitude
+          longitude
+          radius
+          enter
+          exit
+          title
+          body
         }
       }`
     })
     .then(response => this.setState({
-      data: response.data.areas
-    }, () => console.log(this.state)));
+      areas : response.data.areas
+    }, () => console.log('***************This is the areas: \n',this.state.areas)));
   };
 
 /*
@@ -118,7 +150,6 @@ export default class App extends React.Component {
     var enter = this.state.notiEnter;
     var exit = this.state.notiExit;
 
-    console.log(name, typeof name)
 
     client.mutate({
       variables: {"name": name, "latitude": latitude, "longitude": longitude, "radius": radius, "enter": enter, "exit": exit, "title": "", "body": ""},
@@ -135,7 +166,7 @@ export default class App extends React.Component {
           body
         }
       }`
-     }).then(response => console.log(response))
+     }).then(response => console.log('From Post Request: ', response))
      .catch(err => console.error(err));
   }
 
