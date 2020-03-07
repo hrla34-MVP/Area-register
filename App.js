@@ -3,13 +3,25 @@
   - npm install
   - expo start
 */
-
+// front end
 import React from 'react';
 import Constants from 'expo-constants';
 import * as Location from 'expo-location';
 import * as Permissions from 'expo-permissions';
 import { StyleSheet, Text, View, Dimensions, TextInput, Button, ScrollView, KeyboardAvoidingView, StatusBar, Modal, TouchableHighlight, Keyboard, TouchableWithoutFeedback } from 'react-native';
 import MapView, {Circle} from 'react-native-maps';
+// server
+import gql from 'graphql-tag'
+import { ApolloClient, HttpLink, InMemoryCache } from 'apollo-boost';
+import { ApolloProvider } from 'react-apollo';
+
+const client = new ApolloClient({
+  link: new HttpLink({
+    uri: 'https://geofencing-notification.herokuapp.com/graphql'
+    // uri: 'http://localhost:8000/graphql' --> for development / testing
+  }),
+  cache: new InMemoryCache()
+});
 
 export default class App extends React.Component {
   constructor(props) {
@@ -54,6 +66,10 @@ export default class App extends React.Component {
     }
   }
 
+
+
+
+
   // - when you first load the page, it will get the current location's coordinates by calling _getLocationAsync method
   componentDidMount() {
     if (Platform.OS === 'android' && !Constants.isDevice) {
@@ -66,6 +82,64 @@ export default class App extends React.Component {
     }
   }
 // ------------------------------------------------------
+  // server - get request
+  getAll = function() {
+    client.query({
+      query: gql `
+      query areas {
+        areas {
+          name
+        }
+      }`
+    })
+    .then(response => this.setState({
+      data: response.data.areas
+    }, () => console.log(this.state)));
+  };
+
+/*
+          latitude
+          longitude
+          radius
+          enter
+          exit
+          title
+          body
+ */
+// variables: {"name": this.state.name, "latitude": this.state.mapRegion.latitude, "longitude": this.state.mapRegion.longitude, "radius": this.state.radius, "enter": this.state.notiEnter, "exit": this.state.notiExit, "title": "", "body": ""},
+
+
+  postOne(){
+
+    var name = this.state.areaName;
+    var latitude = this.state.mapRegion.latitude;
+    var longitude = this.state.mapRegion.longitude;
+    var radius = this.state.radius;
+    var enter = this.state.notiEnter;
+    var exit = this.state.notiExit;
+
+    console.log(name, typeof name)
+
+    client.mutate({
+      variables: {"name": name, "latitude": latitude, "longitude": longitude, "radius": radius, "enter": enter, "exit": exit, "title": "", "body": ""},
+      mutation: gql`
+      mutation createArea ($name: String!, $latitude: Float!, $longitude: Float!, $radius: Int!, $enter: Boolean!, $exit: Boolean!, $title: String!, $body: String!) {
+        createArea (name: $name, latitude: $latitude, longitude: $longitude, radius: $radius, enter: $enter, exit: $exit, title: $title, body: $body) {
+          name
+          latitude
+          longitude
+          radius
+          enter
+          exit
+          title
+          body
+        }
+      }`
+     }).then(response => console.log(response))
+     .catch(err => console.error(err));
+  }
+
+
   setModalVisible(){
     this.setState({modalVisible: !this.state.modalVisible})
   }
@@ -128,12 +202,11 @@ export default class App extends React.Component {
       latitudeDelta: 0.005, // Delta numbers determine zoom
       longitudeDelta: 0.005 // Delta numbers determine zoom
       }
-    }, () => console.log(this.state))
+    })
   };
 // ------------------------------------------------------
     //this method will convert an full address object to a full address string
   _getAddress = (addressObj) => {
-    console.log(addressObj)
     var name = addressObj.name;
     var street = addressObj.street;
     var city = addressObj.city;
@@ -159,7 +232,7 @@ export default class App extends React.Component {
       //reassign newcoors
     this.setState({
       newcoors: coorsObj
-    },console.log(this.state.newcoors))
+    })
   }
 // ------------------------------------------------------
   _saveAddress = async () => {
@@ -198,7 +271,7 @@ export default class App extends React.Component {
         longitudeDelta: 0.005 // Delta numbers determine zoom
       },
       newAddress
-    }, console.log(this.state))
+    })
   }
 // ------------------------------------------------------RENDERING
   render(){
@@ -396,11 +469,11 @@ export default class App extends React.Component {
                   if(Number(text) > 10000){
                     this.setState({
                       radius: 10000
-                    },() => console.log(this.state.radius))
+                    })
                   } else {
                     this.setState({
                       radius: Number(text)
-                    },() => console.log(this.state.radius))
+                    })
                   }
                   }}
               />
@@ -439,7 +512,11 @@ export default class App extends React.Component {
           </View>
           <View style={styles.conThree5}>
             <View style={styles.conFour5}>
-              <Text style={{color: 'white'}}>RESISTER</Text>
+              <Text style={{color: 'white'}} onPress={
+                async () => {
+                  await this.postOne()
+                  await this.getAll()
+              }}>RESISTER</Text>
             </View>
           </View>
         </View>
